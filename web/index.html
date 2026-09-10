@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07111f">
+  <meta name="description" content="WojThom — generator i ewidencja czasu pracy">
+  <title>WojThom 6.0</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">WORK TIME STUDIO</span>
+        <h1>WojThom <span>6.0</span></h1>
+      </div>
+      <button id="themeBtn" class="icon-btn" type="button" aria-label="Zmień motyw">◐</button>
+    </header>
+
+    <main>
+      <section id="workView" class="view active">
+        <div class="summary-grid">
+          <article class="summary-card primary">
+            <span>Łączny czas</span>
+            <strong id="totalTime">0:00 h</strong>
+          </article>
+          <article class="summary-card">
+            <span>Wpisy</span>
+            <strong id="entryCount">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>Poprawne</span>
+            <strong id="validCount">0</strong>
+          </article>
+        </div>
+
+        <section class="panel editor-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">NOWA LISTA</span>
+              <h2>Wprowadź czas pracy</h2>
+            </div>
+            <button id="clearBtn" class="btn ghost danger" type="button">Wyczyść</button>
+          </div>
+
+          <label>
+            <span>Nagłówek raportu</span>
+            <input id="headerInput" type="text" value="Lista Czasu Pracy" autocomplete="off">
+          </label>
+
+          <label>
+            <span>Logi / wpisy</span>
+            <textarea id="logsInput" rows="7" placeholder="15.02.2026 Firma A 08:00 - 16:00&#10;16.02 Firma B 7.5h&#10;17.02 Firma C 08:30"></textarea>
+          </label>
+
+          <div class="hint-row">
+            <span>Zakres</span><code>08:00 - 16:00</code>
+            <span>Godziny</span><code>7.5h</code>
+            <span>Czas</span><code>08:30</code>
+          </div>
+
+          <div class="actions">
+            <button id="generateBtn" class="btn primary" type="button">Generuj listę</button>
+            <button id="saveHistoryBtn" class="btn secondary" type="button">Zapisz do historii</button>
+          </div>
+        </section>
+
+        <section class="panel results-panel">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">CZAS PRACY</span>
+              <h2>Wpisy</h2>
+            </div>
+            <span id="validationBadge" class="badge">0 wpisów</span>
+          </div>
+          <div id="entriesList" class="entries-list"></div>
+          <div id="emptyState" class="empty-state">
+            <div class="empty-icon">◷</div>
+            <h3>Brak wpisów</h3>
+            <p>Wklej godziny powyżej i wybierz „Generuj listę”.</p>
+          </div>
+        </section>
+      </section>
+
+      <section id="historyView" class="view">
+        <section class="panel">
+          <div class="section-heading">
+            <div><span class="eyebrow">ARCHIWUM</span><h2>Historia</h2></div>
+            <button id="clearHistoryBtn" class="btn ghost danger" type="button">Usuń historię</button>
+          </div>
+          <div id="historyList" class="entries-list"></div>
+          <div id="historyEmpty" class="empty-state"><p>Nie zapisano jeszcze żadnej listy.</p></div>
+        </section>
+      </section>
+
+      <section id="statsView" class="view">
+        <section class="panel">
+          <span class="eyebrow">ANALIZA</span>
+          <h2>Statystyki</h2>
+          <div class="summary-grid stats-grid">
+            <article class="summary-card"><span>Łącznie</span><strong id="statsTotal">0:00 h</strong></article>
+            <article class="summary-card"><span>Raporty</span><strong id="statsReports">0</strong></article>
+            <article class="summary-card"><span>Wpisy</span><strong id="statsEntries">0</strong></article>
+          </div>
+          <p class="muted">Rozbudowane statystyki tygodniowe, miesięczne i norma 37,5 h będą kolejnym modułem.</p>
+        </section>
+      </section>
+
+      <section id="settingsView" class="view">
+        <section class="panel">
+          <span class="eyebrow">APLIKACJA</span>
+          <h2>Ustawienia</h2>
+          <div class="settings-list">
+            <div><strong>Język</strong><span>Polski • EN/NO w przygotowaniu</span></div>
+            <div><strong>Motyw</strong><span>Jasny / ciemny — przycisk w prawym górnym rogu</span></div>
+            <div><strong>Dane</strong><span>Zapisywane lokalnie w przeglądarce</span></div>
+            <div><strong>Wersja</strong><span>WojThom 6.0 Web</span></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Główna nawigacja">
+      <button class="nav-item active" data-view="workView" type="button"><span>⌂</span><b>Praca</b></button>
+      <button class="nav-item" data-view="historyView" type="button"><span>↺</span><b>Historia</b></button>
+      <button class="nav-item" data-view="statsView" type="button"><span>▥</span><b>Statystyki</b></button>
+      <button class="nav-item" data-view="settingsView" type="button"><span>⚙</span><b>Ustawienia</b></button>
+    </nav>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
