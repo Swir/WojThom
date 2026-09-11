@@ -11,9 +11,9 @@ class AppStorage(context: Context) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     /**
-     * Statistics are now a projection of History rather than an independent database.
-     * Keeping one mutable cache is intentional: the Compose screen receives this list
-     * once, while save/delete operations rebuild the same list instance underneath it.
+     * Statistics are a projection of History rather than a second independent database.
+     * The same mutable cache instance is rebuilt after every history mutation so the
+     * current Compose state never drifts away from what is actually archived.
      */
     private var statsCache: MutableList<TimeEntry>? = null
 
@@ -32,8 +32,8 @@ class AppStorage(context: Context) {
     }
 
     /**
-     * An empty list means the user deliberately reset statistics. We keep History,
-     * but remember the reset timestamp so only reports saved afterwards count again.
+     * Clearing statistics starts a new statistics period without deleting History.
+     * New reports saved after the reset are counted normally.
      */
     fun saveStatsEntries(entries: List<TimeEntry>) {
         if (entries.isEmpty()) {
@@ -91,14 +91,13 @@ class AppStorage(context: Context) {
         }
         prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
 
-        // One source of truth: every history mutation immediately rebuilds stats.
+        // Deleting/clearing history now immediately affects statistics as well.
         rebuildStatsFromHistory(history)
     }
 
     /**
-     * Kept for compatibility with the current UI call-site. Previous versions merged
-     * and de-duplicated individual rows here, which could silently lose legitimate
-     * identical shifts. Statistics now come from saved reports exactly once per row.
+     * Compatibility hook for the current UI. Older builds merged rows into a separate
+     * statistics list. We now return the history-derived projection instead.
      */
     fun mergeStats(existing: List<TimeEntry>, incoming: List<TimeEntry>): List<TimeEntry> {
         @Suppress("UNUSED_VARIABLE")
@@ -120,13 +119,31 @@ class AppStorage(context: Context) {
 
     private fun rebuildStatsFromHistory(history: List<HistorySnapshot>): MutableList<TimeEntry> {
         val resetAt = prefs.getLong(KEY_STATS_RESET_AT, Long.MIN_VALUE)
-        val rebuilt = history
-            .asSequence()
-            .filter { it.savedAt > resetAt }
-            .flatMap { it.entries.asSequence() }
-            .filter { it.isValid }
+        val activeReports = history.filter { it.savedAt > resetAt }
+
+        /*
+         * History contains snapshots/revisions. Summing every snapshot would count the
+         * same real shift several times when a report is saved, edited and saved again.
+         * A plain distinct() is also wrong because two genuinely identical rows can be
+         * present in one report. We therefore calculate a multiset union: for every
+         * shift signature we keep the largest occurrence count found in any snapshot.
+         */
+        val bestOccurrences = linkedMapOf<String, List<TimeEntry>>()
+        activeReports.forEach { snapshot ->
+            snapshot.entries
+                .filter { it.isValid }
+                .groupBy(::statsSignature)
+                .forEach { (signature, occurrences) ->
+                    val current = bestOccurrences[signature]
+                    if (current == null || occurrences.size > current.size) {
+                        bestOccurrences[signature] = occurrences
+                    }
+                }
+        }
+
+        val rebuilt = bestOccurrences.values
+            .flatten()
             .sortedWith(compareBy<TimeEntry> { it.date }.thenBy { it.client.lowercase() })
-            .toList()
 
         val cache = statsCache ?: mutableListOf<TimeEntry>().also { statsCache = it }
         cache.clear()
@@ -134,6 +151,14 @@ class AppStorage(context: Context) {
         persistStatsCache(cache)
         return cache
     }
+
+    private fun statsSignature(entry: TimeEntry): String = listOf(
+        entry.date?.toString().orEmpty(),
+        entry.client.trim().lowercase(),
+        entry.start.trim(),
+        entry.end.trim(),
+        entry.minutes.toString()
+    ).joinToString("|")
 
     private fun persistStatsCache(entries: List<TimeEntry>) {
         prefs.edit().putString(KEY_STATS, encodeEntries(entries).toString()).apply()
