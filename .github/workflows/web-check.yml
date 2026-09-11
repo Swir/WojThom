@@ -1,0 +1,42 @@
+name: Web Check
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-check.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check JavaScript syntax
+        run: node --check web/app.js
+
+      - name: Verify required files
+        run: |
+          test -f web/index.html
+          test -f web/styles.css
+          test -f web/controls.css
+          test -f web/app.js
+          grep -q 'pdfLangDialog' web/index.html
+          grep -q "language: 'pl'" web/app.js
+          grep -q "pdfLanguageTitle" web/app.js
