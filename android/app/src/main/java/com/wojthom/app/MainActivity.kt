@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -161,8 +160,7 @@ private fun WorkScreen(modifier: Modifier = Modifier) {
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Button(
-                            onClick = { entries = TimeParser.parse(logs) },
-                            modifier = Modifier.weight(1f)
+                            onClick = { entries = TimeParser.parse(logs) }
                         ) {
                             Text("Generuj listę")
                         }
@@ -249,7 +247,7 @@ private fun EntryCard(entry: TimeEntry, onDelete: () -> Unit) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.fillMaxWidth(0.82f)) {
                 Text(
                     entry.client.ifBlank { "Brak klienta" },
                     style = MaterialTheme.typography.titleMedium,
