@@ -10,48 +10,46 @@ import java.time.LocalDate
 class AppStorage(context: Context) {
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    /**
-     * Statistics are a projection of History rather than a second independent database.
-     * The same mutable cache instance is rebuilt after every history mutation so the
-     * current Compose state never drifts away from what is actually archived.
-     */
-    private var statsCache: MutableList<TimeEntry>? = null
-
     fun loadHeader(defaultValue: String): String = prefs.getString(KEY_HEADER, defaultValue) ?: defaultValue
-    fun saveHeader(value: String) = prefs.edit().putString(KEY_HEADER, value).apply()
+    fun saveHeader(value: String): Boolean = prefs.edit().putString(KEY_HEADER, value).commit()
 
     fun loadLogs(): String = prefs.getString(KEY_LOGS, "") ?: ""
-    fun saveLogs(value: String) = prefs.edit().putString(KEY_LOGS, value).apply()
+    fun saveLogs(value: String): Boolean = prefs.edit().putString(KEY_LOGS, value).commit()
 
     fun loadEntries(): List<TimeEntry> = decodeEntries(prefs.getString(KEY_ENTRIES, null))
-    fun saveEntries(entries: List<TimeEntry>) = prefs.edit().putString(KEY_ENTRIES, encodeEntries(entries).toString()).apply()
+    fun saveEntries(entries: List<TimeEntry>): Boolean =
+        prefs.edit().putString(KEY_ENTRIES, encodeEntries(entries).toString()).commit()
 
-    fun loadStatsEntries(): List<TimeEntry> {
-        statsCache?.let { return it }
-        return rebuildStatsFromHistory(loadHistory())
+    /**
+     * History is the single source of truth. There is deliberately no mutable statistics
+     * cache here: every call returns a fresh immutable List so Compose always receives a
+     * new instance and can recompose the statistics screen reliably.
+     */
+    fun loadStatsEntries(): List<TimeEntry> = projectStats(loadHistory()).toList()
+
+    /**
+     * Kept for compatibility with the existing UI call site. The old implementation
+     * de-duplicated/merged rows in a second database and could drift away from History.
+     */
+    fun mergeStats(existing: List<TimeEntry>, incoming: List<TimeEntry>): List<TimeEntry> {
+        @Suppress("UNUSED_VARIABLE")
+        val ignored = existing.size + incoming.size
+        return loadStatsEntries().toList()
     }
 
     /**
-     * Clearing statistics starts a new statistics period without deleting History.
-     * New reports saved after the reset are counted normally.
+     * Empty means "start statistics from zero from now". Non-empty statistics are always
+     * derived from History, so we only persist a diagnostic snapshot for compatibility.
      */
-    fun saveStatsEntries(entries: List<TimeEntry>) {
-        if (entries.isEmpty()) {
-            val cache = statsCache ?: mutableListOf<TimeEntry>().also { statsCache = it }
-            cache.clear()
+    fun saveStatsEntries(entries: List<TimeEntry>): Boolean {
+        return if (entries.isEmpty()) {
             prefs.edit()
                 .putLong(KEY_STATS_RESET_AT, System.currentTimeMillis())
-                .putString(KEY_STATS, JSONArray().toString())
-                .apply()
-            return
+                .putString(KEY_STATS, "[]")
+                .commit()
+        } else {
+            prefs.edit().putString(KEY_STATS, encodeEntries(entries).toString()).commit()
         }
-
-        val cache = statsCache ?: mutableListOf<TimeEntry>().also { statsCache = it }
-        if (cache !== entries) {
-            cache.clear()
-            cache.addAll(entries.filter { it.isValid })
-        }
-        persistStatsCache(cache)
     }
 
     fun loadHistory(): List<HistorySnapshot> {
@@ -60,15 +58,23 @@ class AppStorage(context: Context) {
             val array = JSONArray(raw)
             buildList {
                 for (index in 0 until array.length()) {
-                    val item = array.getJSONObject(index)
-                    val entries = decodeEntries(item.optJSONArray("entries") ?: JSONArray())
+                    val item = runCatching { array.getJSONObject(index) }.getOrNull() ?: continue
+                    val decodedEntries = runCatching {
+                        decodeEntries(item.optJSONArray("entries") ?: JSONArray())
+                    }.getOrDefault(emptyList())
+
+                    val id = item.optString("id").ifBlank { java.util.UUID.randomUUID().toString() }
+                    val savedAt = item.optLong("savedAt", System.currentTimeMillis())
+                    val header = item.optString("header")
+                    val total = item.optInt("totalMinutes", decodedEntries.sumOf { it.minutes })
+
                     add(
                         HistorySnapshot(
-                            id = item.optString("id"),
-                            savedAt = item.optLong("savedAt"),
-                            header = item.optString("header"),
-                            totalMinutes = item.optInt("totalMinutes", entries.sumOf { it.minutes }),
-                            entries = entries
+                            id = id,
+                            savedAt = savedAt,
+                            header = header,
+                            totalMinutes = total,
+                            entries = decodedEntries
                         )
                     )
                 }
@@ -76,58 +82,52 @@ class AppStorage(context: Context) {
         }.getOrDefault(emptyList())
     }
 
-    fun saveHistory(history: List<HistorySnapshot>) {
-        val array = JSONArray()
-        history.forEach { snapshot ->
-            array.put(
-                JSONObject().apply {
-                    put("id", snapshot.id)
-                    put("savedAt", snapshot.savedAt)
-                    put("header", snapshot.header)
-                    put("totalMinutes", snapshot.totalMinutes)
-                    put("entries", encodeEntries(snapshot.entries))
-                }
-            )
-        }
-        prefs.edit().putString(KEY_HISTORY, array.toString()).apply()
-
-        // Deleting/clearing history now immediately affects statistics as well.
-        rebuildStatsFromHistory(history)
-    }
-
     /**
-     * Compatibility hook for the current UI. Older builds merged rows into a separate
-     * statistics list. We now return the history-derived projection instead.
+     * Synchronous and verified history write. We use commit() intentionally here because
+     * saving a work report is a user action where correctness matters more than a tiny
+     * asynchronous write gain. Statistics are written in the same transaction.
      */
-    fun mergeStats(existing: List<TimeEntry>, incoming: List<TimeEntry>): List<TimeEntry> {
-        @Suppress("UNUSED_VARIABLE")
-        val ignored = existing.size + incoming.size
-        return loadStatsEntries()
+    fun saveHistory(history: List<HistorySnapshot>): Boolean {
+        val historyJson = encodeHistory(history).toString()
+        val projectedStats = projectStats(history)
+        val ok = prefs.edit()
+            .putString(KEY_HISTORY, historyJson)
+            .putString(KEY_STATS, encodeEntries(projectedStats).toString())
+            .commit()
+        if (!ok) return false
+
+        // Read-back verification protects us from reporting success when persistence failed.
+        val reloaded = loadHistory()
+        return reloaded.size == history.size &&
+            reloaded.map { it.id } == history.map { it.id }
     }
 
-    fun clearWorkData() {
-        prefs.edit()
-            .remove(KEY_HEADER)
-            .remove(KEY_LOGS)
-            .remove(KEY_ENTRIES)
-            .remove(KEY_HISTORY)
-            .remove(KEY_STATS)
-            .remove(KEY_STATS_RESET_AT)
-            .apply()
-        statsCache = null
+    fun appendHistory(snapshot: HistorySnapshot): List<HistorySnapshot>? {
+        val updated = loadHistory() + snapshot
+        return if (saveHistory(updated)) loadHistory() else null
     }
 
-    private fun rebuildStatsFromHistory(history: List<HistorySnapshot>): MutableList<TimeEntry> {
+    fun resetStatistics(): Boolean = prefs.edit()
+        .putLong(KEY_STATS_RESET_AT, System.currentTimeMillis())
+        .putString(KEY_STATS, "[]")
+        .commit()
+
+    fun clearWorkData(): Boolean = prefs.edit()
+        .remove(KEY_HEADER)
+        .remove(KEY_LOGS)
+        .remove(KEY_ENTRIES)
+        .remove(KEY_HISTORY)
+        .remove(KEY_STATS)
+        .remove(KEY_STATS_RESET_AT)
+        .commit()
+
+    private fun projectStats(history: List<HistorySnapshot>): List<TimeEntry> {
         val resetAt = prefs.getLong(KEY_STATS_RESET_AT, Long.MIN_VALUE)
         val activeReports = history.filter { it.savedAt > resetAt }
 
-        /*
-         * History contains snapshots/revisions. Summing every snapshot would count the
-         * same real shift several times when a report is saved, edited and saved again.
-         * A plain distinct() is also wrong because two genuinely identical rows can be
-         * present in one report. We therefore calculate a multiset union: for every
-         * shift signature we keep the largest occurrence count found in any snapshot.
-         */
+        // History can contain revisions of the same report. A plain distinct() would drop
+        // legitimate identical shifts, while summing every snapshot would double count
+        // revisions. We keep the maximum occurrence count of each real shift signature.
         val bestOccurrences = linkedMapOf<String, List<TimeEntry>>()
         activeReports.forEach { snapshot ->
             snapshot.entries
@@ -136,20 +136,15 @@ class AppStorage(context: Context) {
                 .forEach { (signature, occurrences) ->
                     val current = bestOccurrences[signature]
                     if (current == null || occurrences.size > current.size) {
-                        bestOccurrences[signature] = occurrences
+                        bestOccurrences[signature] = occurrences.map { it.copy() }
                     }
                 }
         }
 
-        val rebuilt = bestOccurrences.values
+        return bestOccurrences.values
             .flatten()
             .sortedWith(compareBy<TimeEntry> { it.date }.thenBy { it.client.lowercase() })
-
-        val cache = statsCache ?: mutableListOf<TimeEntry>().also { statsCache = it }
-        cache.clear()
-        cache.addAll(rebuilt)
-        persistStatsCache(cache)
-        return cache
+            .toList()
     }
 
     private fun statsSignature(entry: TimeEntry): String = listOf(
@@ -160,8 +155,18 @@ class AppStorage(context: Context) {
         entry.minutes.toString()
     ).joinToString("|")
 
-    private fun persistStatsCache(entries: List<TimeEntry>) {
-        prefs.edit().putString(KEY_STATS, encodeEntries(entries).toString()).apply()
+    private fun encodeHistory(history: List<HistorySnapshot>): JSONArray = JSONArray().apply {
+        history.forEach { snapshot ->
+            put(
+                JSONObject().apply {
+                    put("id", snapshot.id)
+                    put("savedAt", snapshot.savedAt)
+                    put("header", snapshot.header)
+                    put("totalMinutes", snapshot.totalMinutes)
+                    put("entries", encodeEntries(snapshot.entries))
+                }
+            )
+        }
     }
 
     private fun encodeEntries(entries: List<TimeEntry>): JSONArray = JSONArray().apply {
@@ -187,7 +192,7 @@ class AppStorage(context: Context) {
 
     private fun decodeEntries(array: JSONArray): List<TimeEntry> = buildList {
         for (index in 0 until array.length()) {
-            val item = array.getJSONObject(index)
+            val item = runCatching { array.getJSONObject(index) }.getOrNull() ?: continue
             val date = item.optString("date").takeIf { it.isNotBlank() && it != "null" }?.let {
                 runCatching { LocalDate.parse(it) }.getOrNull()
             }
