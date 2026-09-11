@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:pathData="M54,18 A28,28 0,1 1,53.9 18"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#40D7FF"
+        android:strokeWidth="5.2"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M54,54 L42,42 M54,54 L68,44"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#A8F2FF"
+        android:strokeWidth="5.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M54,49 A5,5 0,1 1,53.9 49"
+        android:fillColor="#18BFFF" />
+
+    <path
+        android:pathData="M67,32 L84,32 L89,37 L89,68 L67,68 Z"
+        android:fillColor="#0B2D4D"
+        android:strokeColor="#70E2FF"
+        android:strokeWidth="2.5"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M72,43 L75,46 L80,40 M72,52 L75,55 L80,49 M72,61 L75,64 L80,58"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#36E4FF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <path
+        android:pathData="M82,43 L86,43 M82,52 L86,52 M82,61 L86,61"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#7CCBFF"
+        android:strokeWidth="2.2"
+        android:strokeLineCap="round" />
+
+    <path
+        android:pathData="M20,67 L28,88 L38,69 L47,88 L57,67"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#25C9FF"
+        android:strokeWidth="6"
+        android:strokeLineCap="square"
+        android:strokeLineJoin="miter" />
+
+    <path
+        android:pathData="M63,84 L63,76 L68,76 L68,84 Z M72,84 L72,69 L77,69 L77,84 Z M81,84 L81,61 L86,61 L86,84 Z"
+        android:fillColor="#1A8CFF" />
+
+    <path
+        android:pathData="M18,54 C18,34 34,18 54,18 C76,18 92,35 92,55 C92,75 76,91 55,91"
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#146CFF"
+        android:strokeWidth="2.2"
+        android:strokeAlpha="0.55"
+        android:strokeLineCap="round" />
+</vector>
