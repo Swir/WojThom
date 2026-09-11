@@ -11,8 +11,8 @@ android {
         applicationId = "com.wojthom.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 60001
-        versionName = "6.0.1-dev"
+        versionCode = 60002
+        versionName = "6.0.2-dev"
     }
 
     buildTypes {
