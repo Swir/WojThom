@@ -31,12 +31,13 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check web/app.js
 
-      - name: Verify required files
+      - name: Verify required files and core features
         run: |
           test -f web/index.html
           test -f web/styles.css
-          test -f web/controls.css
           test -f web/app.js
           grep -q 'pdfLangDialog' web/index.html
-          grep -q "language: 'pl'" web/app.js
-          grep -q "pdfLanguageTitle" web/app.js
+          grep -q 'weeklyProgress' web/index.html
+          grep -q 'pdfLanguageTitle' web/app.js
+          grep -q 'statsEntries' web/app.js
+          grep -Eq "language:[[:space:]]*'pl'" web/app.js
