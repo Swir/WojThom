@@ -29,15 +29,21 @@ jobs:
           node-version: '22'
 
       - name: Check JavaScript syntax
-        run: node --check web/app.js
+        run: |
+          node --check web/app.js
+          node --check web/pdf-premium.js
 
       - name: Verify required files and core features
         run: |
           test -f web/index.html
           test -f web/styles.css
           test -f web/app.js
+          test -f web/pdf-premium.js
           grep -q 'pdfLangDialog' web/index.html
+          grep -q 'pdf-premium.js' web/index.html
           grep -q 'weeklyProgress' web/index.html
           grep -q 'pdfLanguageTitle' web/app.js
           grep -q 'statsEntries' web/app.js
+          grep -q 'REPORT_TEXT' web/pdf-premium.js
+          grep -q 'averageMinutes' web/pdf-premium.js
           grep -Eq "language:[[:space:]]*'pl'" web/app.js
