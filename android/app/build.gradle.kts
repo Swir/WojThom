@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.wojthom.app"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.wojthom.app"
         minSdk = 26
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 60000
         versionName = "6.0.0-dev"
     }
