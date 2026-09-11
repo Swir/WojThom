@@ -1,23 +1,23 @@
 (() => {
   const $ = (s) => document.querySelector(s);
   const $$ = (s) => [...document.querySelectorAll(s)];
-  const STORAGE_KEY = 'wojthom6-web-state-v3';
-  const OLD_KEYS = ['wojthom6-web-state-v2', 'wojthom6-web-state-v1'];
+  const STORAGE_KEY = 'wojthom6-web-state-v4';
+  const OLD_KEYS = ['wojthom6-web-state-v3', 'wojthom6-web-state-v2', 'wojthom6-web-state-v1'];
   const WEEK_TARGET = 37 * 60 + 30;
 
   const I18N = {
     pl: {
-      studio:'Studio Czasu Pracy',totalTime:'Łączny czas',entries:'Wpisy',valid:'Poprawne',newList:'NOWA LISTA',dashboard:'Panel pracy',reportHeader:'Nagłówek raportu',logs:'Logi / wpisy',logsPlaceholder:'15.02.2026 Firma A 08:00 - 16:00\n16.02 Firma B 7.5h\n17.02 Firma C 08:30',generate:'Generuj listę',saveHistory:'Zapisz do historii',exportPdf:'Eksportuj PDF',clear:'Wyczyść',work:'Praca',searchEntries:'Szukaj w bieżącej liście',noEntries:'Brak wpisów',emptyHint:'Wklej godziny i wygeneruj listę.',archive:'ARCHIWUM',history:'Historia',historyDesc:'Zapisane listy czasu pracy.',searchHistory:'Szukaj w historii',clearHistory:'Usuń historię',noSavedLists:'Nie zapisano jeszcze żadnej listy.',analysis:'ANALIZA',stats:'Statystyki',weeklyTarget:'Norma tygodniowa 37,5 h',thisMonth:'Ten miesiąc',total:'Łącznie',reports:'Raporty',clients:'Klienci',months:'Miesiące',clearStats:'Wyczyść statystyki',app:'APLIKACJA',settings:'Ustawienia',appLanguage:'Język aplikacji',languageHelp:'Interfejs po polsku, angielsku lub norwesku.',theme:'Wygląd',themeHelp:'Jasny lub ciemny motyw.',dark:'Ciemny',light:'Jasny',data:'Dane lokalne',dataHelp:'Bieżąca lista, historia i statystyki są zapisywane w tej przeglądarce.',clearAll:'Wyczyść dane aplikacji',about:'O aplikacji',aboutText:'WojThom 6.0 APEX — przebudowana kontynuacja WojThom 5.3.',pdfLanguageTitle:'Język dokumentu PDF',pdfLanguageText:'Wybierz język raportu niezależnie od języka aplikacji.',cancel:'Anuluj',close:'Zamknij',invalidDate:'Nieprawidłowa data',noClient:'Brak klienta',manualTime:'czas podany ręcznie',invalidEntry:'Wpis wymaga poprawy.',edit:'Edytuj',delete:'Usuń',load:'Wczytaj',saved:'Zapisano',confirmClear:'Wyczyścić obecną listę?',confirmHistory:'Trwale usunąć całą historię?',confirmStats:'Trwale wyczyścić statystyki?',confirmAll:'Usunąć wszystkie lokalne dane WojThom?',remaining:'Do normy',over:'Ponad normę',targetReached:'Norma osiągnięta',monthEntries:'wpisów',pdfDate:'Data',pdfClient:'Klient / firma',pdfStart:'Od',pdfEnd:'Do',pdfWork:'Czas',pdfTotal:'Łączny czas',pdfEntries:'Liczba wpisów',pdfFooter:'Wygenerowano w WojThom 6.0 APEX Web',printHint:'Wybierz „Zapisz jako PDF” w oknie drukowania.',defaultHeader:'Lista Czasu Pracy',editClient:'Klient / firma:',editWork:'Czas pracy (np. 08:00 albo 7.5):',noPdfEntries:'Brak wpisów do eksportu.',invalidPdfEntries:'Popraw błędne wpisy przed eksportem PDF.'
+      studio:'Studio Czasu Pracy',totalTime:'Łączny czas',entries:'Wpisy',valid:'Poprawne',newList:'NOWA LISTA',dashboard:'Panel pracy',reportHeader:'Nagłówek raportu',logs:'Logi / wpisy',logsPlaceholder:'15.02.2026 Firma A 08:00 - 16:00\n16.02 Firma B 7.5h\n17.02 Firma C 08:30',generate:'Generuj listę',saveHistory:'Zapisz do historii',exportPdf:'Eksportuj PDF',clear:'Wyczyść',work:'Praca',searchEntries:'Szukaj w bieżącej liście',noEntries:'Brak wpisów',emptyHint:'Wklej godziny i wygeneruj listę.',archive:'ARCHIWUM',history:'Historia',historyDesc:'Zapisane listy czasu pracy.',searchHistory:'Szukaj w historii',clearHistory:'Usuń historię',noSavedLists:'Nie zapisano jeszcze żadnej listy.',analysis:'ANALIZA',stats:'Statystyki',weeklyTarget:'Norma tygodniowa 37,5 h',thisMonth:'Ten miesiąc',total:'Łącznie',reports:'Raporty',clients:'Klienci',workDays:'Dni pracy',averageDaily:'Średnio / dzień',months:'Miesiące',clearStats:'Wyczyść statystyki',app:'APLIKACJA',settings:'Ustawienia',appLanguage:'Język aplikacji',languageHelp:'Interfejs po polsku, angielsku lub norwesku.',theme:'Wygląd',themeHelp:'Jasny lub ciemny motyw.',dark:'Ciemny',light:'Jasny',data:'Dane lokalne',dataHelp:'Bieżąca lista, historia i statystyki są zapisywane w tej przeglądarce.',clearAll:'Wyczyść dane aplikacji',about:'O aplikacji',aboutText:'WojThom 6.0 APEX — przebudowana kontynuacja WojThom 5.3.',pdfLanguageTitle:'Język dokumentu PDF',pdfLanguageText:'Wybierz język raportu niezależnie od języka aplikacji.',cancel:'Anuluj',close:'Zamknij',invalidDate:'Nieprawidłowa data',noClient:'Brak klienta',manualTime:'czas podany ręcznie',invalidEntry:'Wpis wymaga poprawy.',edit:'Edytuj',delete:'Usuń',load:'Wczytaj',saved:'Zapisano',confirmClear:'Wyczyścić obecną listę?',confirmHistory:'Trwale usunąć całą historię?',confirmStats:'Rozpocząć statystyki od zera? Historia pozostanie bez zmian.',confirmAll:'Usunąć wszystkie lokalne dane WojThom?',remaining:'Do normy',over:'Ponad normę',targetReached:'Norma osiągnięta',monthEntries:'wpisów',duplicateReport:'Ta sama lista jest już ostatnim zapisanym raportem.',pdfDate:'Data',pdfClient:'Klient / firma',pdfStart:'Od',pdfEnd:'Do',pdfWork:'Czas',pdfTotal:'Łączny czas',pdfEntries:'Liczba wpisów',pdfFooter:'Wygenerowano w WojThom 6.0 APEX Web',printHint:'Wybierz „Zapisz jako PDF” w oknie drukowania.',defaultHeader:'Lista Czasu Pracy',editClient:'Klient / firma:',editWork:'Czas pracy (np. 08:00 albo 7.5):',noPdfEntries:'Brak wpisów do eksportu.',invalidPdfEntries:'Popraw błędne wpisy przed eksportem PDF.'
     },
     en: {
-      studio:'Work Time Studio',totalTime:'Total time',entries:'Entries',valid:'Valid',newList:'NEW LIST',dashboard:'Work dashboard',reportHeader:'Report header',logs:'Logs / entries',logsPlaceholder:'15.02.2026 Company A 08:00 - 16:00\n16.02 Company B 7.5h\n17.02 Company C 08:30',generate:'Generate list',saveHistory:'Save to history',exportPdf:'Export PDF',clear:'Clear',work:'Work',searchEntries:'Search current list',noEntries:'No entries',emptyHint:'Paste work hours and generate the list.',archive:'ARCHIVE',history:'History',historyDesc:'Saved work-time lists.',searchHistory:'Search history',clearHistory:'Clear history',noSavedLists:'No saved lists yet.',analysis:'ANALYSIS',stats:'Statistics',weeklyTarget:'Weekly target 37.5 h',thisMonth:'This month',total:'All time',reports:'Reports',clients:'Clients',months:'Months',clearStats:'Clear statistics',app:'APPLICATION',settings:'Settings',appLanguage:'Application language',languageHelp:'Interface available in Polish, English and Norwegian.',theme:'Appearance',themeHelp:'Choose light or dark mode.',dark:'Dark',light:'Light',data:'Local data',dataHelp:'Current list, history and statistics are stored in this browser.',clearAll:'Clear application data',about:'About',aboutText:'WojThom 6.0 APEX — rebuilt successor to WojThom 5.3.',pdfLanguageTitle:'PDF document language',pdfLanguageText:'Choose the report language independently from the application language.',cancel:'Cancel',close:'Close',invalidDate:'Invalid date',noClient:'No client',manualTime:'time entered manually',invalidEntry:'Entry needs correction.',edit:'Edit',delete:'Delete',load:'Load',saved:'Saved',confirmClear:'Clear the current list?',confirmHistory:'Permanently clear all history?',confirmStats:'Permanently clear statistics?',confirmAll:'Delete all local WojThom data?',remaining:'Remaining',over:'Above target',targetReached:'Target reached',monthEntries:'entries',pdfDate:'Date',pdfClient:'Client / company',pdfStart:'Start',pdfEnd:'End',pdfWork:'Duration',pdfTotal:'Total time',pdfEntries:'Entries',pdfFooter:'Generated with WojThom 6.0 APEX Web',printHint:'Choose “Save as PDF” in the print dialog.',defaultHeader:'Work Time List',editClient:'Client / company:',editWork:'Work time (e.g. 08:00 or 7.5):',noPdfEntries:'There are no entries to export.',invalidPdfEntries:'Fix invalid entries before exporting PDF.'
+      studio:'Work Time Studio',totalTime:'Total time',entries:'Entries',valid:'Valid',newList:'NEW LIST',dashboard:'Work dashboard',reportHeader:'Report header',logs:'Logs / entries',logsPlaceholder:'15.02.2026 Company A 08:00 - 16:00\n16.02 Company B 7.5h\n17.02 Company C 08:30',generate:'Generate list',saveHistory:'Save to history',exportPdf:'Export PDF',clear:'Clear',work:'Work',searchEntries:'Search current list',noEntries:'No entries',emptyHint:'Paste work hours and generate the list.',archive:'ARCHIVE',history:'History',historyDesc:'Saved work-time lists.',searchHistory:'Search history',clearHistory:'Clear history',noSavedLists:'No saved lists yet.',analysis:'ANALYSIS',stats:'Statistics',weeklyTarget:'Weekly target 37.5 h',thisMonth:'This month',total:'All time',reports:'Reports',clients:'Clients',workDays:'Work days',averageDaily:'Avg / day',months:'Months',clearStats:'Clear statistics',app:'APPLICATION',settings:'Settings',appLanguage:'Application language',languageHelp:'Interface available in Polish, English and Norwegian.',theme:'Appearance',themeHelp:'Choose light or dark mode.',dark:'Dark',light:'Light',data:'Local data',dataHelp:'Current list, history and statistics are stored in this browser.',clearAll:'Clear application data',about:'About',aboutText:'WojThom 6.0 APEX — rebuilt successor to WojThom 5.3.',pdfLanguageTitle:'PDF document language',pdfLanguageText:'Choose the report language independently from the application language.',cancel:'Cancel',close:'Close',invalidDate:'Invalid date',noClient:'No client',manualTime:'time entered manually',invalidEntry:'Entry needs correction.',edit:'Edit',delete:'Delete',load:'Load',saved:'Saved',confirmClear:'Clear the current list?',confirmHistory:'Permanently clear all history?',confirmStats:'Start statistics from zero? History will remain unchanged.',confirmAll:'Delete all local WojThom data?',remaining:'Remaining',over:'Above target',targetReached:'Target reached',monthEntries:'entries',duplicateReport:'The same list is already the most recently saved report.',pdfDate:'Date',pdfClient:'Client / company',pdfStart:'Start',pdfEnd:'End',pdfWork:'Duration',pdfTotal:'Total time',pdfEntries:'Entries',pdfFooter:'Generated with WojThom 6.0 APEX Web',printHint:'Choose “Save as PDF” in the print dialog.',defaultHeader:'Work Time List',editClient:'Client / company:',editWork:'Work time (e.g. 08:00 or 7.5):',noPdfEntries:'There are no entries to export.',invalidPdfEntries:'Fix invalid entries before exporting PDF.'
     },
     nb: {
-      studio:'Arbeidstidsstudio',totalTime:'Total tid',entries:'Oppføringer',valid:'Gyldige',newList:'NY LISTE',dashboard:'Arbeidspanel',reportHeader:'Rapportoverskrift',logs:'Logger / oppføringer',logsPlaceholder:'15.02.2026 Firma A 08:00 - 16:00\n16.02 Firma B 7.5t\n17.02 Firma C 08:30',generate:'Generer liste',saveHistory:'Lagre i historikk',exportPdf:'Eksporter PDF',clear:'Tøm',work:'Arbeid',searchEntries:'Søk i gjeldende liste',noEntries:'Ingen oppføringer',emptyHint:'Lim inn arbeidstider og generer listen.',archive:'ARKIV',history:'Historikk',historyDesc:'Lagrede arbeidstidslister.',searchHistory:'Søk i historikk',clearHistory:'Tøm historikk',noSavedLists:'Ingen lagrede lister ennå.',analysis:'ANALYSE',stats:'Statistikk',weeklyTarget:'Ukesnorm 37,5 t',thisMonth:'Denne måneden',total:'Totalt',reports:'Rapporter',clients:'Kunder',months:'Måneder',clearStats:'Tøm statistikk',app:'APPLIKASJON',settings:'Innstillinger',appLanguage:'Appspråk',languageHelp:'Grensesnitt på polsk, engelsk eller norsk.',theme:'Utseende',themeHelp:'Velg lyst eller mørkt tema.',dark:'Mørkt',light:'Lyst',data:'Lokale data',dataHelp:'Gjeldende liste, historikk og statistikk lagres i denne nettleseren.',clearAll:'Tøm appdata',about:'Om appen',aboutText:'WojThom 6.0 APEX — en nybygd fortsettelse av WojThom 5.3.',pdfLanguageTitle:'Språk for PDF-dokument',pdfLanguageText:'Velg rapportspråk uavhengig av appspråket.',cancel:'Avbryt',close:'Lukk',invalidDate:'Ugyldig dato',noClient:'Ingen kunde',manualTime:'tid angitt manuelt',invalidEntry:'Oppføringen må korrigeres.',edit:'Rediger',delete:'Slett',load:'Last inn',saved:'Lagret',confirmClear:'Tømme gjeldende liste?',confirmHistory:'Slette hele historikken permanent?',confirmStats:'Tømme statistikken permanent?',confirmAll:'Slette alle lokale WojThom-data?',remaining:'Gjenstår',over:'Over normen',targetReached:'Normen er nådd',monthEntries:'oppføringer',pdfDate:'Dato',pdfClient:'Kunde / firma',pdfStart:'Fra',pdfEnd:'Til',pdfWork:'Tid',pdfTotal:'Total tid',pdfEntries:'Antall oppføringer',pdfFooter:'Generert med WojThom 6.0 APEX Web',printHint:'Velg «Lagre som PDF» i utskriftsdialogen.',defaultHeader:'Arbeidstidsliste',editClient:'Kunde / firma:',editWork:'Arbeidstid (f.eks. 08:00 eller 7.5):',noPdfEntries:'Ingen oppføringer å eksportere.',invalidPdfEntries:'Rett ugyldige oppføringer før PDF-eksport.'
+      studio:'Arbeidstidsstudio',totalTime:'Total tid',entries:'Oppføringer',valid:'Gyldige',newList:'NY LISTE',dashboard:'Arbeidspanel',reportHeader:'Rapportoverskrift',logs:'Logger / oppføringer',logsPlaceholder:'15.02.2026 Firma A 08:00 - 16:00\n16.02 Firma B 7.5t\n17.02 Firma C 08:30',generate:'Generer liste',saveHistory:'Lagre i historikk',exportPdf:'Eksporter PDF',clear:'Tøm',work:'Arbeid',searchEntries:'Søk i gjeldende liste',noEntries:'Ingen oppføringer',emptyHint:'Lim inn arbeidstider og generer listen.',archive:'ARKIV',history:'Historikk',historyDesc:'Lagrede arbeidstidslister.',searchHistory:'Søk i historikk',clearHistory:'Tøm historikk',noSavedLists:'Ingen lagrede lister ennå.',analysis:'ANALYSE',stats:'Statistikk',weeklyTarget:'Ukesnorm 37,5 t',thisMonth:'Denne måneden',total:'Totalt',reports:'Rapporter',clients:'Kunder',workDays:'Arbeidsdager',averageDaily:'Snitt / dag',months:'Måneder',clearStats:'Tøm statistikk',app:'APPLIKASJON',settings:'Innstillinger',appLanguage:'Appspråk',languageHelp:'Grensesnitt på polsk, engelsk eller norsk.',theme:'Utseende',themeHelp:'Velg lyst eller mørkt tema.',dark:'Mørkt',light:'Lyst',data:'Lokale data',dataHelp:'Gjeldende liste, historikk og statistikk lagres i denne nettleseren.',clearAll:'Tøm appdata',about:'Om appen',aboutText:'WojThom 6.0 APEX — en nybygd fortsettelse av WojThom 5.3.',pdfLanguageTitle:'Språk for PDF-dokument',pdfLanguageText:'Velg rapportspråk uavhengig av appspråket.',cancel:'Avbryt',close:'Lukk',invalidDate:'Ugyldig dato',noClient:'Ingen kunde',manualTime:'tid angitt manuelt',invalidEntry:'Oppføringen må korrigeres.',edit:'Rediger',delete:'Slett',load:'Last inn',saved:'Lagret',confirmClear:'Tømme gjeldende liste?',confirmHistory:'Slette hele historikken permanent?',confirmStats:'Starte statistikken fra null? Historikken beholdes.',confirmAll:'Slette alle lokale WojThom-data?',remaining:'Gjenstår',over:'Over normen',targetReached:'Normen er nådd',monthEntries:'oppføringer',duplicateReport:'Den samme listen er allerede den siste lagrede rapporten.',pdfDate:'Dato',pdfClient:'Kunde / firma',pdfStart:'Fra',pdfEnd:'Til',pdfWork:'Tid',pdfTotal:'Total tid',pdfEntries:'Antall oppføringer',pdfFooter:'Generert med WojThom 6.0 APEX Web',printHint:'Velg «Lagre som PDF» i utskriftsdialogen.',defaultHeader:'Arbeidstidsliste',editClient:'Kunde / firma:',editWork:'Arbeidstid (f.eks. 08:00 eller 7.5):',noPdfEntries:'Ingen oppføringer å eksportere.',invalidPdfEntries:'Rett ugyldige oppføringer før PDF-eksport.'
     }
   };
 
-  const state = { header:I18N.pl.defaultHeader, logs:'', entries:[], history:[], statsEntries:[], theme:'dark', language:'pl' };
+  const state = { header:I18N.pl.defaultHeader, logs:'', entries:[], history:[], statsEntries:[], statsResetAt:0, theme:'dark', language:'pl' };
   let pdfTarget = null;
 
   const t = (key, lang = state.language) => I18N[lang]?.[key] ?? I18N.pl[key] ?? key;
@@ -39,7 +39,11 @@
     if (saved) Object.assign(state, saved);
     if (state.language === 'no') state.language = 'nb';
     if (!I18N[state.language]) state.language = 'pl';
-    if (!Array.isArray(state.statsEntries)) state.statsEntries = mergeStats([], state.history.flatMap(h => h.entries || []));
+    if (!Array.isArray(state.entries)) state.entries = [];
+    if (!Array.isArray(state.history)) state.history = [];
+    if (!Number.isFinite(Number(state.statsResetAt))) state.statsResetAt = 0;
+    // v4 no longer trusts the old independent statsEntries cache.
+    state.statsEntries = [];
     $('#headerInput').value = state.header || t('defaultHeader');
     $('#logsInput').value = state.logs || '';
     $('#languageSelect').value = state.language;
@@ -115,13 +119,49 @@
   const parseLogs=(raw)=>raw.split(/\r?\n/).map(v=>v.trim()).filter(Boolean).map(parseLine);
   function dateText(iso){ if(!iso)return t('invalidDate'); const [y,m,d]=iso.split('-').map(Number); return new Intl.DateTimeFormat(localeFor(),{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(y,m-1,d)); }
 
-  function mergeStats(existing,incoming){
-    const map=new Map();
-    [...existing,...incoming].filter(e=>e?.valid!==false&&e?.date&&e?.client&&e?.minutes>0).forEach(e=>{
-      const key=[e.date,e.client.trim().toLowerCase(),e.start,e.end,e.minutes,(e.source||'').trim()].join('|');
-      if(!map.has(key)) map.set(key,{...e});
+  const historyTime = (report) => {
+    const value = report?.savedAtIso ?? report?.savedAt ?? 0;
+    if (typeof value === 'number') return value;
+    const parsed = Date.parse(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const statsSignature = (entry) => [
+    entry?.date || '',
+    String(entry?.client || '').trim().toLowerCase(),
+    String(entry?.start || '-').trim(),
+    String(entry?.end || '-').trim(),
+    Number(entry?.minutes) || 0
+  ].join('|');
+
+  function activeReports(){
+    const resetAt = Number(state.statsResetAt) || 0;
+    return state.history.filter(report => historyTime(report) > resetAt);
+  }
+
+  function projectedStatsEntries(){
+    const best = new Map();
+    activeReports().forEach(report => {
+      const local = new Map();
+      (report.entries || []).filter(e => e?.valid !== false && e?.date && e?.client && Number(e?.minutes) > 0).forEach(entry => {
+        const key = statsSignature(entry);
+        const list = local.get(key) || [];
+        list.push({...entry});
+        local.set(key, list);
+      });
+      local.forEach((occurrences, key) => {
+        const current = best.get(key);
+        if (!current || occurrences.length > current.length) best.set(key, occurrences);
+      });
     });
-    return [...map.values()];
+    return [...best.values()].flat();
+  }
+
+  function reportFingerprint(header, entries){
+    return JSON.stringify([
+      String(header || '').trim().toLowerCase(),
+      (entries || []).map(e => [e.date || '', String(e.client || '').trim().toLowerCase(), e.start || '-', e.end || '-', Number(e.minutes) || 0])
+    ]);
   }
 
   function renderEntries(){
@@ -143,30 +183,51 @@
 
   function mondayStart(date){ const d=new Date(date); d.setHours(0,0,0,0); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return d; }
   function statsData(){
-    const entries=state.statsEntries.filter(e=>e.date&&e.minutes>0);
+    const reports = activeReports();
+    const entries = projectedStatsEntries();
     const now=new Date(), start=mondayStart(now), end=new Date(start); end.setDate(end.getDate()+7);
     const thisWeek=entries.filter(e=>{const d=new Date(`${e.date}T12:00:00`);return d>=start&&d<end;}).reduce((s,e)=>s+e.minutes,0);
     const ym=`${now.getFullYear()}-${pad(now.getMonth()+1)}`;
     const thisMonth=entries.filter(e=>e.date.startsWith(ym)).reduce((s,e)=>s+e.minutes,0);
     const total=entries.reduce((s,e)=>s+e.minutes,0);
     const clients=new Set(entries.map(e=>e.client.trim().toLowerCase()).filter(Boolean)).size;
-    const months=new Map(); entries.forEach(e=>{const key=e.date.slice(0,7);const v=months.get(key)||{minutes:0,count:0};v.minutes+=e.minutes;v.count++;months.set(key,v);});
-    return {entries,thisWeek,thisMonth,total,clients,months:[...months.entries()].sort((a,b)=>b[0].localeCompare(a[0]))};
+    const workDays=new Set(entries.map(e=>e.date).filter(Boolean)).size;
+    const averageDaily=workDays?Math.round(total/workDays):0;
+    const months=new Map(); entries.forEach(e=>{const key=e.date.slice(0,7);const v=months.get(key)||{minutes:0,count:0,days:new Set()};v.minutes+=e.minutes;v.count++;v.days.add(e.date);months.set(key,v);});
+    return {reports,entries,thisWeek,thisMonth,total,clients,workDays,averageDaily,weekStart:start,weekEnd:new Date(end.getTime()-86400000),months:[...months.entries()].sort((a,b)=>b[0].localeCompare(a[0]))};
   }
 
   function renderStats(){
     const s=statsData();
-    $('#statsEntries').textContent=s.entries.length; $('#statsWeek').textContent=`${duration(s.thisWeek)} h`; $('#statsMonth').textContent=`${duration(s.thisMonth)} h`; $('#statsTotal').textContent=`${duration(s.total)} h`; $('#statsReports').textContent=state.history.length; $('#statsClients').textContent=s.clients; $('#weeklyProgress').value=Math.min(s.thisWeek,WEEK_TARGET);
+    $('#statsEntries').textContent=s.entries.length;
+    $('#statsWeek').textContent=`${duration(s.thisWeek)} h`;
+    $('#statsMonth').textContent=`${duration(s.thisMonth)} h`;
+    $('#statsTotal').textContent=`${duration(s.total)} h`;
+    $('#statsReports').textContent=s.reports.length;
+    $('#statsClients').textContent=s.clients;
+    $('#statsWorkDays') && ($('#statsWorkDays').textContent=s.workDays);
+    $('#statsAverage') && ($('#statsAverage').textContent=`${duration(s.averageDaily)} h`);
+    if ($('#statsWeekRange')) {
+      const fmt = new Intl.DateTimeFormat(localeFor(), {day:'2-digit',month:'2-digit'});
+      $('#statsWeekRange').textContent = `${fmt.format(s.weekStart)} – ${fmt.format(s.weekEnd)}`;
+    }
+    $('#weeklyProgress').value=Math.min(s.thisWeek,WEEK_TARGET);
     const diff=s.thisWeek-WEEK_TARGET; $('#weeklyStatus').textContent=diff===0?t('targetReached'):diff<0?`${t('remaining')}: ${duration(-diff)} h`:`${t('over')}: ${duration(diff)} h`;
-    $('#monthStats').innerHTML=s.months.map(([key,v])=>{const [y,m]=key.split('-').map(Number);const name=new Intl.DateTimeFormat(localeFor(),{month:'long',year:'numeric'}).format(new Date(y,m-1,1));return `<div class="month-row"><div><b>${escapeHtml(name)}</b><small>${v.count} ${escapeHtml(t('monthEntries'))}</small></div><strong>${duration(v.minutes)} h</strong></div>`;}).join('');
+    $('#monthStats').innerHTML=s.months.map(([key,v])=>{const [y,m]=key.split('-').map(Number);const name=new Intl.DateTimeFormat(localeFor(),{month:'long',year:'numeric'}).format(new Date(y,m-1,1));return `<div class="month-row"><div><b>${escapeHtml(name)}</b><small>${v.count} ${escapeHtml(t('monthEntries'))} • ${v.days.size} ${escapeHtml(t('workDays').toLowerCase())}</small></div><strong>${duration(v.minutes)} h</strong></div>`;}).join('');
   }
 
   function renderAll(){ renderEntries(); renderHistory(); renderStats(); }
 
   function saveToHistory(){
     if(!state.entries.length)return;
-    const snapshot={id:uid(),savedAtIso:new Date().toISOString(),header:$('#headerInput').value.trim()||t('defaultHeader'),totalMinutes:state.entries.reduce((s,e)=>s+e.minutes,0),entries:structuredClone(state.entries)};
-    state.history.push(snapshot); state.statsEntries=mergeStats(state.statsEntries,state.entries); saveState(); renderHistory(); renderStats();
+    const header=$('#headerInput').value.trim()||t('defaultHeader');
+    const last=state.history.at(-1);
+    if(last && reportFingerprint(last.header,last.entries)===reportFingerprint(header,state.entries)){
+      alert(t('duplicateReport'));
+      return;
+    }
+    const snapshot={id:uid(),savedAtIso:new Date().toISOString(),header,totalMinutes:state.entries.reduce((s,e)=>s+e.minutes,0),entries:structuredClone(state.entries)};
+    state.history.push(snapshot); saveState(); renderHistory(); renderStats();
   }
 
   function editEntry(id){
@@ -202,8 +263,8 @@
   $('#entriesList').addEventListener('click',(ev)=>{const card=ev.target.closest('[data-id]'),action=ev.target.closest('[data-action]')?.dataset.action;if(!card||!action)return;if(action==='delete'){state.entries=state.entries.filter(e=>e.id!==card.dataset.id);renderEntries();}if(action==='edit')editEntry(card.dataset.id);});
   $('#historyList').addEventListener('click',(ev)=>{const card=ev.target.closest('[data-history-id]'),action=ev.target.closest('[data-action]')?.dataset.action;if(!card||!action)return;const h=state.history.find(x=>x.id===card.dataset.historyId);if(!h)return;if(action==='load-history'){state.entries=structuredClone(h.entries).map(e=>({...e,id:uid()}));state.header=h.header;$('#headerInput').value=h.header;renderEntries();activateView('workView');}if(action==='delete-history'){state.history=state.history.filter(x=>x.id!==h.id);saveState();renderHistory();renderStats();}if(action==='pdf-history')requestPdf(h.header,h.entries);});
   $('#clearHistoryBtn').addEventListener('click',()=>{if(state.history.length&&confirm(t('confirmHistory'))){state.history=[];saveState();renderHistory();renderStats();}});
-  $('#clearStatsBtn').addEventListener('click',()=>{if(state.statsEntries.length&&confirm(t('confirmStats'))){state.statsEntries=[];saveState();renderStats();}});
-  $('#clearAllBtn').addEventListener('click',()=>{if(!confirm(t('confirmAll')))return;const lang=state.language,theme=state.theme;Object.assign(state,{header:t('defaultHeader'),logs:'',entries:[],history:[],statsEntries:[],language:lang,theme});$('#headerInput').value=state.header;$('#logsInput').value='';saveState();renderAll();activateView('workView');});
+  $('#clearStatsBtn').addEventListener('click',()=>{if(statsData().entries.length&&confirm(t('confirmStats'))){state.statsResetAt=Date.now();state.statsEntries=[];saveState();renderStats();}});
+  $('#clearAllBtn').addEventListener('click',()=>{if(!confirm(t('confirmAll')))return;const lang=state.language,theme=state.theme;Object.assign(state,{header:t('defaultHeader'),logs:'',entries:[],history:[],statsEntries:[],statsResetAt:0,language:lang,theme});$('#headerInput').value=state.header;$('#logsInput').value='';saveState();renderAll();activateView('workView');});
   $('#languageSelect').addEventListener('change',(e)=>setLanguage(e.target.value));
   $('#themeBtn').addEventListener('click',()=>{applyTheme(state.theme==='dark'?'light':'dark');saveState();}); $('#darkThemeBtn').addEventListener('click',()=>{applyTheme('dark');saveState();}); $('#lightThemeBtn').addEventListener('click',()=>{applyTheme('light');saveState();});
   $$('.nav-item').forEach(b=>b.addEventListener('click',()=>activateView(b.dataset.view)));
