@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07111f">
-  <meta name="description" content="WojThom — generator i ewidencja czasu pracy">
-  <title>WojThom 6.0</title>
+  <meta name="description" content="WojThom — work-time generator and reporting app">
+  <title>WojThom 6.0 Web</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="controls.css">
 </head>
 <body>
   <div class="app-shell">
@@ -21,113 +22,44 @@
     <main>
       <section id="workView" class="view active">
         <div class="summary-grid">
-          <article class="summary-card primary">
-            <span>Łączny czas</span>
-            <strong id="totalTime">0:00 h</strong>
-          </article>
-          <article class="summary-card">
-            <span>Wpisy</span>
-            <strong id="entryCount">0</strong>
-          </article>
-          <article class="summary-card">
-            <span>Poprawne</span>
-            <strong id="validCount">0</strong>
-          </article>
+          <article class="summary-card primary"><span data-i18n="totalTime">Łączny czas</span><strong id="totalTime">0:00 h</strong></article>
+          <article class="summary-card"><span data-i18n="entries">Wpisy</span><strong id="entryCount">0</strong></article>
+          <article class="summary-card"><span data-i18n="valid">Poprawne</span><strong id="validCount">0</strong></article>
         </div>
 
         <section class="panel editor-panel">
           <div class="section-heading">
-            <div>
-              <span class="eyebrow">NOWA LISTA</span>
-              <h2>Wprowadź czas pracy</h2>
-            </div>
-            <button id="clearBtn" class="btn ghost danger" type="button">Wyczyść</button>
+            <div><span class="eyebrow" data-i18n="newListEyebrow">NOWA LISTA</span><h2 data-i18n="enterWorkTime">Wprowadź czas pracy</h2></div>
+            <button id="clearBtn" class="btn ghost danger" type="button" data-i18n="clear">Wyczyść</button>
           </div>
-
-          <label>
-            <span>Nagłówek raportu</span>
-            <input id="headerInput" type="text" value="Lista Czasu Pracy" autocomplete="off">
-          </label>
-
-          <label>
-            <span>Logi / wpisy</span>
-            <textarea id="logsInput" rows="7" placeholder="15.02.2026 Firma A 08:00 - 16:00&#10;16.02 Firma B 7.5h&#10;17.02 Firma C 08:30"></textarea>
-          </label>
-
-          <div class="hint-row">
-            <span>Zakres</span><code>08:00 - 16:00</code>
-            <span>Godziny</span><code>7.5h</code>
-            <span>Czas</span><code>08:30</code>
-          </div>
-
+          <label><span data-i18n="reportHeader">Nagłówek raportu</span><input id="headerInput" type="text" value="Lista Czasu Pracy" autocomplete="off"></label>
+          <label><span data-i18n="logsEntries">Logi / wpisy</span><textarea id="logsInput" rows="7" data-i18n-placeholder="logsPlaceholder" placeholder="15.02.2026 Firma A 08:00 - 16:00&#10;16.02 Firma B 7.5h&#10;17.02 Firma C 08:30"></textarea></label>
+          <div class="hint-row"><span data-i18n="range">Zakres</span><code>08:00 - 16:00</code><span data-i18n="hours">Godziny</span><code>7.5h</code><span data-i18n="time">Czas</span><code>08:30</code></div>
           <div class="actions">
-            <button id="generateBtn" class="btn primary" type="button">Generuj listę</button>
-            <button id="saveHistoryBtn" class="btn secondary" type="button">Zapisz do historii</button>
+            <button id="generateBtn" class="btn primary" type="button" data-i18n="generateList">Generuj listę</button>
+            <button id="saveHistoryBtn" class="btn secondary" type="button" data-i18n="saveHistory">Zapisz do historii</button>
+            <button id="exportPdfBtn" class="btn secondary pdf-btn" type="button" data-i18n="exportPdf">Eksportuj PDF</button>
           </div>
         </section>
 
         <section class="panel results-panel">
-          <div class="section-heading">
-            <div>
-              <span class="eyebrow">CZAS PRACY</span>
-              <h2>Wpisy</h2>
-            </div>
-            <span id="validationBadge" class="badge">0 wpisów</span>
-          </div>
+          <div class="section-heading"><div><span class="eyebrow" data-i18n="workTimeEyebrow">CZAS PRACY</span><h2 data-i18n="entries">Wpisy</h2></div><span id="validationBadge" class="badge">0/0</span></div>
           <div id="entriesList" class="entries-list"></div>
-          <div id="emptyState" class="empty-state">
-            <div class="empty-icon">◷</div>
-            <h3>Brak wpisów</h3>
-            <p>Wklej godziny powyżej i wybierz „Generuj listę”.</p>
-          </div>
+          <div id="emptyState" class="empty-state"><div class="empty-icon">◷</div><h3 data-i18n="noEntries">Brak wpisów</h3><p data-i18n="emptyHint">Wklej godziny powyżej i wybierz „Generuj listę”.</p></div>
         </section>
       </section>
 
-      <section id="historyView" class="view">
-        <section class="panel">
-          <div class="section-heading">
-            <div><span class="eyebrow">ARCHIWUM</span><h2>Historia</h2></div>
-            <button id="clearHistoryBtn" class="btn ghost danger" type="button">Usuń historię</button>
-          </div>
-          <div id="historyList" class="entries-list"></div>
-          <div id="historyEmpty" class="empty-state"><p>Nie zapisano jeszcze żadnej listy.</p></div>
-        </section>
-      </section>
+      <section id="historyView" class="view"><section class="panel"><div class="section-heading"><div><span class="eyebrow" data-i18n="archive">ARCHIWUM</span><h2 data-i18n="history">Historia</h2></div><button id="clearHistoryBtn" class="btn ghost danger" type="button" data-i18n="clearHistory">Usuń historię</button></div><div id="historyList" class="entries-list"></div><div id="historyEmpty" class="empty-state"><p data-i18n="noSavedLists">Nie zapisano jeszcze żadnej listy.</p></div></section></section>
 
-      <section id="statsView" class="view">
-        <section class="panel">
-          <span class="eyebrow">ANALIZA</span>
-          <h2>Statystyki</h2>
-          <div class="summary-grid stats-grid">
-            <article class="summary-card"><span>Łącznie</span><strong id="statsTotal">0:00 h</strong></article>
-            <article class="summary-card"><span>Raporty</span><strong id="statsReports">0</strong></article>
-            <article class="summary-card"><span>Wpisy</span><strong id="statsEntries">0</strong></article>
-          </div>
-          <p class="muted">Rozbudowane statystyki tygodniowe, miesięczne i norma 37,5 h będą kolejnym modułem.</p>
-        </section>
-      </section>
+      <section id="statsView" class="view"><section class="panel"><span class="eyebrow" data-i18n="analysis">ANALIZA</span><h2 data-i18n="stats">Statystyki</h2><div class="summary-grid stats-grid"><article class="summary-card"><span data-i18n="total">Łącznie</span><strong id="statsTotal">0:00 h</strong></article><article class="summary-card"><span data-i18n="reports">Raporty</span><strong id="statsReports">0</strong></article><article class="summary-card"><span data-i18n="entries">Wpisy</span><strong id="statsEntries">0</strong></article></div><p class="muted" data-i18n="statsNext">Rozbudowane statystyki tygodniowe, miesięczne i norma 37,5 h będą kolejnym modułem.</p></section></section>
 
-      <section id="settingsView" class="view">
-        <section class="panel">
-          <span class="eyebrow">APLIKACJA</span>
-          <h2>Ustawienia</h2>
-          <div class="settings-list">
-            <div><strong>Język</strong><span>Polski • EN/NO w przygotowaniu</span></div>
-            <div><strong>Motyw</strong><span>Jasny / ciemny — przycisk w prawym górnym rogu</span></div>
-            <div><strong>Dane</strong><span>Zapisywane lokalnie w przeglądarce</span></div>
-            <div><strong>Wersja</strong><span>WojThom 6.0 Web</span></div>
-          </div>
-        </section>
-      </section>
+      <section id="settingsView" class="view"><section class="panel"><span class="eyebrow" data-i18n="appEyebrow">APLIKACJA</span><h2 data-i18n="settings">Ustawienia</h2><div class="settings-control"><label for="languageSelect"><span data-i18n="appLanguage">Język aplikacji</span></label><select id="languageSelect" class="select-control"><option value="pl">Polski</option><option value="en">English</option><option value="no">Norsk</option></select><small data-i18n="languageHelp">Zmiana języka nie zmienia języka PDF — wybierasz go osobno przy eksporcie.</small></div><div class="settings-list"><div><strong data-i18n="theme">Motyw</strong><span data-i18n="themeHelp">Jasny / ciemny — przycisk w prawym górnym rogu</span></div><div><strong data-i18n="data">Dane</strong><span data-i18n="dataHelp">Zapisywane lokalnie w przeglądarce</span></div><div><strong data-i18n="pdf">PDF</strong><span data-i18n="pdfHelp">Polski / English / Norsk — wybór przy każdym eksporcie</span></div><div><strong data-i18n="version">Wersja</strong><span>WojThom 6.0 Web</span></div></div></section></section>
     </main>
 
-    <nav class="bottom-nav" aria-label="Główna nawigacja">
-      <button class="nav-item active" data-view="workView" type="button"><span>⌂</span><b>Praca</b></button>
-      <button class="nav-item" data-view="historyView" type="button"><span>↺</span><b>Historia</b></button>
-      <button class="nav-item" data-view="statsView" type="button"><span>▥</span><b>Statystyki</b></button>
-      <button class="nav-item" data-view="settingsView" type="button"><span>⚙</span><b>Ustawienia</b></button>
-    </nav>
+    <nav class="bottom-nav" aria-label="Główna nawigacja" id="bottomNav"><button class="nav-item active" data-view="workView" type="button"><span>⌂</span><b data-i18n="work">Praca</b></button><button class="nav-item" data-view="historyView" type="button"><span>↺</span><b data-i18n="history">Historia</b></button><button class="nav-item" data-view="statsView" type="button"><span>▥</span><b data-i18n="stats">Statystyki</b></button><button class="nav-item" data-view="settingsView" type="button"><span>⚙</span><b data-i18n="settings">Ustawienia</b></button></nav>
   </div>
+
+  <dialog id="pdfLangDialog" class="language-dialog"><form method="dialog"><div class="dialog-icon">PDF</div><h2 data-i18n="pdfLanguageTitle">Język dokumentu PDF</h2><p data-i18n="pdfLanguageText">Wybierz język, w którym ma zostać zapisany raport. Język aplikacji pozostanie bez zmian.</p><div class="language-options"><button type="button" class="language-option" data-pdf-lang="pl"><strong>Polski</strong><span>PL</span></button><button type="button" class="language-option" data-pdf-lang="en"><strong>English</strong><span>EN</span></button><button type="button" class="language-option" data-pdf-lang="no"><strong>Norsk</strong><span>NO</span></button></div><button class="btn ghost dialog-cancel" value="cancel" data-i18n="cancel">Anuluj</button></form></dialog>
 
   <script src="app.js"></script>
 </body>
