@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#050c14">
   <meta name="description" content="WojThom 6.0 APEX — work time lists, history, statistics and PDF reports">
   <title>WojThom 6.0 APEX Web</title>
+  <link rel="icon" type="image/png" sizes="256x256" href="icon-256.png">
+  <link rel="apple-touch-icon" href="icon-256.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -72,7 +75,7 @@
         <section class="panel">
           <div class="section-heading"><div><span class="eyebrow" data-i18n="analysis">ANALIZA</span><h2 data-i18n="stats">Statystyki</h2></div><span id="statsEntries" class="badge">0</span></div>
           <div class="target-card">
-            <span data-i18n="weeklyTarget">Norma tygodniowa 37,5 h</span>
+            <div class="target-title-row"><span data-i18n="weeklyTarget">Norma tygodniowa 37,5 h</span><small id="statsWeekRange"></small></div>
             <strong id="statsWeek">0:00 h</strong>
             <progress id="weeklyProgress" max="2250" value="0"></progress>
             <small id="weeklyStatus"></small>
@@ -82,6 +85,8 @@
             <article><span data-i18n="total">Łącznie</span><strong id="statsTotal">0:00 h</strong></article>
             <article><span data-i18n="reports">Raporty</span><strong id="statsReports">0</strong></article>
             <article><span data-i18n="clients">Klienci</span><strong id="statsClients">0</strong></article>
+            <article><span data-i18n="workDays">Dni pracy</span><strong id="statsWorkDays">0</strong></article>
+            <article><span data-i18n="averageDaily">Średnio / dzień</span><strong id="statsAverage">0:00 h</strong></article>
           </div>
           <h3 class="subheading" data-i18n="months">Miesiące</h3>
           <div id="monthStats" class="month-list"></div>
@@ -95,7 +100,7 @@
           <div class="settings-block"><strong data-i18n="appLanguage">Język aplikacji</strong><p class="muted" data-i18n="languageHelp">Interfejs po polsku, angielsku lub norwesku.</p><select id="languageSelect" class="select-control"><option value="pl">Polski</option><option value="en">English</option><option value="nb">Norsk</option></select></div>
           <div class="settings-block"><strong data-i18n="theme">Wygląd</strong><p class="muted" data-i18n="themeHelp">Jasny lub ciemny motyw.</p><div class="actions"><button id="darkThemeBtn" class="btn secondary" type="button" data-i18n="dark">Ciemny</button><button id="lightThemeBtn" class="btn secondary" type="button" data-i18n="light">Jasny</button></div></div>
           <div class="settings-block"><strong data-i18n="data">Dane lokalne</strong><p class="muted" data-i18n="dataHelp">Bieżąca lista, historia i statystyki są zapisywane w tej przeglądarce.</p><button id="clearAllBtn" class="btn ghost danger wide" type="button" data-i18n="clearAll">Wyczyść dane aplikacji</button></div>
-          <div class="settings-block"><strong data-i18n="about">O aplikacji</strong><p class="muted" data-i18n="aboutText">WojThom 6.0 APEX — przebudowana kontynuacja WojThom 5.3.</p><span class="version-badge">Web 6.0.2-dev</span></div>
+          <div class="settings-block"><strong data-i18n="about">O aplikacji</strong><p class="muted" data-i18n="aboutText">WojThom 6.0 APEX — przebudowana kontynuacja WojThom 5.3.</p><span class="version-badge">Web 6.0.3-dev</span></div>
         </section>
       </section>
     </main>
