@@ -146,6 +146,7 @@ There is also **no public GitHub Release** in the repository at the time of this
 - Browser data is tied to the browser/storage context unless an explicit backup/export workflow is implemented and used.
 - No public signed/stable Android release is claimed here.
 - Product completion remains N/A until a canonical roadmap defines a measurable scope.
+- No `LICENSE` file is currently present in the repository; this documentation migration does not infer or assign licensing terms.
 - This README migration does not change application code, dependencies, versions, signing, workflows or licensing.
 
 ## 🔎 Search Keywords
